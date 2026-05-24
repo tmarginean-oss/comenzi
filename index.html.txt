@@ -1,204 +1,374 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comenzi Clienti</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f5f9;
-      color: #222;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a365d">
+    
+    <title>Agendă Personală Vânzări v11</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f0f4f8; color: #333; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        h2, h3, h4 { color: #1a365d; margin-top: 0; margin-bottom: 10px; }
+        
+        .sectiune { background: #ffffff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        .sectiune-client-nou { border-left: 6px solid #3182ce; background-color: #ebf8ff; }
+        .sectiune-jurnal { border-left: 6px solid #805ad5; background-color: #faf5ff; }
+        
+        .formular-client { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .grup-input { display: flex; flex-direction: column; }
+        
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #cbd5e0; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        label { font-weight: bold; font-size: 14px; color: #4a5568; }
+        
+        .grup-butoane { display: flex; gap: 12px; align-items: center; }
+        button { border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; }
+        
+        .btn-albastru { background-color: #3182ce; color: white; }
+        .btn-rosu { background-color: #e53e3e; color: white; width: auto; white-space: nowrap; height: 48px; }
+        .btn-verde { background-color: #38a169; color: white; margin-top: 20px; font-size: 18px; padding: 16px; }
+        .btn-whatsapp { background-color: #25D366; color: white; margin-top: 8px; }
+        .btn-trimite-jurnal { background-color: #805ad5; color: white; padding: 8px 15px; font-size: 14px; width: auto; border-radius: 6px; }
 
-    header {
-      background: #1e88e5;
-      color: white;
-      padding: 20px;
-      font-size: 28px;
-      font-weight: bold;
-      text-align: center;
-    }
+        .zona-produse { display: none; margin-top: 25px; }
+        .detalii-livrare-bula { background-color: #edf2f7; padding: 15px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; color: #2d3748; border-left: 4px solid #4a5568; }
+        
+        .grid-produse { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 15px; }
+        .card-produs { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; }
+        .produs-antet { font-weight: bold; font-size: 14px; color: #1a202c; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0; }
+        
+        .tabel-variante { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .tabel-variante th { text-align: left; color: #718096; padding-bottom: 8px; font-size: 12px; }
+        td { padding: 6px 0; }
+        
+        .input-pret-modificabil { width: 75px; padding: 8px; text-align: center; border: 1px solid #cbd5e0; border-radius: 6px; font-weight: bold; color: #2b6cb0; background-color: #fffdec; }
+        .input-cantitate { width: 70px; padding: 8px; text-align: center; border: 1px solid #cbd5e0; border-radius: 6px; }
 
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-    }
+        .istoric-section { background-color: #f0fff4; padding: 18px; border-left: 6px solid #38a169; margin-bottom: 25px; border-radius: 10px; }
+        .catalog-section { background-color: #f7fafc; padding: 18px; border-left: 6px solid #4a5568; border-radius: 10px; }
+        .zona-rezumat { display: none; background: #fff8e1; border: 2px dashed #ffb300; padding: 20px; border-radius: 10px; margin-top: 25px; }
 
-    .search {
-      width: 100%;
-      padding: 18px;
-      font-size: 24px;
-      border-radius: 12px;
-      border: 2px solid #ccc;
-      box-sizing: border-box;
-      margin-bottom: 20px;
-    }
-
-    .client-card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .client-name {
-      font-size: 30px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .product-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fafafa;
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      font-size: 24px;
-    }
-
-    .buttons {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    button {
-      width: 60px;
-      height: 60px;
-      border: none;
-      border-radius: 12px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .minus {
-      background: #ef5350;
-      color: white;
-    }
-
-    .plus {
-      background: #43a047;
-      color: white;
-    }
-
-    .qty {
-      width: 40px;
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .save {
-      width: 100%;
-      height: 80px;
-      background: #1e88e5;
-      color: white;
-      font-size: 28px;
-      margin-top: 20px;
-    }
-
-    .history {
-      margin-top: 30px;
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .history h2 {
-      margin-top: 0;
-    }
-
-    .history-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #ddd;
-      font-size: 22px;
-    }
-  </style>
+        .card-comanda-veche { background: white; border: 1px solid #d6bcfa; border-radius: 8px; padding: 15px; margin-top: 10px; }
+        .antet-comanda-veche { display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #553c9a; border-bottom: 1px solid #e9d8fd; padding-bottom: 8px; margin-bottom: 8px; font-size: 14px; }
+        .text-comanda-veche { font-family: monospace; white-space: pre-wrap; background: #f9f5ff; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; }
+    </style>
 </head>
 <body>
 
-<header>
-  Comenzi Clienti
-</header>
-
 <div class="container">
+    <h2>Sistemul tău de Lucru (Înlocuitor Agendă v11)</h2>
 
-  <input class="search" type="text" placeholder="🔍 Caută client...">
-
-  <div class="client-card">
-    <div class="client-name">POP ION</div>
-    <div>Telefon: 0740 000 000</div>
-  </div>
-
-  <div class="product-row">
-    <div>APĂ 5L</div>
-    <div class="buttons">
-      <button class="minus" onclick="changeQty('apa', -1)">-</button>
-      <div class="qty" id="apa">3</div>
-      <button class="plus" onclick="changeQty('apa', 1)">+</button>
-    </div>
-  </div>
-
-  <div class="product-row">
-    <div>COLA 2L</div>
-    <div class="buttons">
-      <button class="minus" onclick="changeQty('cola', -1)">-</button>
-      <div class="qty" id="cola">2</div>
-      <button class="plus" onclick="changeQty('cola', 1)">+</button>
-    </div>
-  </div>
-
-  <div class="product-row">
-    <div>PÂINE</div>
-    <div class="buttons">
-      <button class="minus" onclick="changeQty('paine', -1)">-</button>
-      <div class="qty" id="paine">5</div>
-      <button class="plus" onclick="changeQty('paine', 1)">+</button>
-    </div>
-  </div>
-
-  <button class="save" onclick="saveOrder()">
-    SALVEAZĂ COMANDA
-  </button>
-
-  <div class="history">
-    <h2>Istoric Comenzi</h2>
-
-    <div class="history-item">
-      20 Mai - apă 5L, cola 2L
+    <div class="sectiune sectiune-client-nou">
+        <h3>➕ Adaugă Client Nou în Baza de Date</h3>
+        <div class="formular-client">
+            <div class="grup-input">
+                <label>Nume Firmă / Client:</label>
+                <input type="text" id="numeClientNou" placeholder="Ex: Cofetăria Delice SRL">
+            </div>
+            <div class="grup-input">
+                <label>Telefon Contact:</label>
+                <input type="tel" id="telefonClientNou" placeholder="Ex: 07xxxxxxxx">
+            </div>
+            <div class="grup-input">
+                <label>Adresă de Livrare:</label>
+                <input type="text" id="adresaClientNou" placeholder="Ex: Str. Nouă Nr. 5, Sibiu">
+            </div>
+        </div>
+        <button class="btn-albastru" onclick="salveazaClientNou()">Salvează Client</button>
     </div>
 
-    <div class="history-item">
-      12 Mai - apă 5L, pâine
+    <div class="sectiune">
+        <h3>👥 Alege Clientul pentru Comandă</h3>
+        <div class="grup-butoane">
+            <div style="flex-grow: 1;">
+                <select id="selectClient" onchange="incarcaClient()">
+                    <option value="">-- Deschide lista de clienți --</option>
+                </select>
+            </div>
+            <button class="btn-rosu" onclick="stergeClientulSelectat()">❌ Șterge Client</button>
+        </div>
     </div>
-  </div>
 
+    <div id="zonaProduse" class="zona-produse sectiune">
+        <h3 id="titluComanda">Comandă curentă: ...</h3>
+        <div id="detaliiClientBula" class="detalii-livrare-bula"></div>
+        
+        <div id="sectiuneIstoric" class="istoric-section" style="display: none;">
+            <h4>✨ Produse comandate în trecut de acest client (Preț memorat):</h4>
+            <div id="listaIstoric" class="grid-produse"></div>
+        </div>
+
+        <div class="catalog-section">
+            <h4>🔍 Căutare rapidă în modelele de cutii:</h4>
+            <input type="text" id="cautaProdus" oninput="filtreazaProduse()" placeholder="Scrie modelul căutat (Ex: GALA)...">
+            <div id="listaCatalog" class="grid-produse"></div>
+        </div>
+
+        <button class="btn-verde" onclick="finalizareComandaCompleta()">📋 Finalizează și Salvează în Jurnal</button>
+    </div>
+
+    <div id="zonaRezumat" class="zona-rezumat">
+        <h3>📄 Date pregătite pentru trimis</h3>
+        <textarea id="textRezumatFinal" rows="8" readonly></textarea>
+        <button class="btn-albastru" onclick="copiazaTextul()">📋 Copiază textul</button>
+        <button class="btn-whatsapp" onclick="trimitePeWhatsApp()">💬 Trimite acum la Facturare</button>
+    </div>
+
+    <div class="sectiune sectiune-jurnal">
+        <h3>📜 Jurnal Istoric Comenzi (Valabilitate 1 An)</h3>
+        <p style="font-size: 14px; color: #6b46c1; margin-top: -5px;">Căutare rapidă pentru istoricul zilei sau comenzi de acum 18 zile.</p>
+        <input type="text" id="cautaInJurnal" oninput="filtreazaJurnal()" placeholder="🔍 Caută după nume client sau dată (Ex: 06.05)...">
+        
+        <div id="listaJurnalComenzi"></div>
+    </div>
 </div>
 
 <script>
-  function changeQty(id, amount) {
-    const el = document.getElementById(id);
-    let value = parseInt(el.innerText);
+    // BAZA DE DATE OFICIALĂ DIN FIȘA TA DE PREȚURI
+    const catalogMarfa = [
+        {
+            id: "rendes_vous", nume: "CUTII PATRATE CU CAPAC RENDES VOUS",
+            variante: [
+                { dim: "18*18*8", pret: 1.5 }, { dim: "20*20*8", pret: 1.7 }, { dim: "22*22*8", pret: 1.9 },
+                { dim: "25*25*8", pret: 2.2 }, { dim: "28*28*8", pret: 2.8 }, { dim: "32*32*8", pret: 3.5 },
+                { dim: "20*20*10", pret: 2.6 }, { dim: "23*23*10", pret: 2.9 }, { dim: "26*26*10", pret: 3.3 },
+                { dim: "29*29*10", pret: 3.6 }, { dim: "32*32*10", pret: 4.1 }
+            ]
+        },
+        {
+            id: "gala", nume: "CUTII DREPTUNGHIULARE CU FEREASTRA GALA",
+            variante: [
+                { dim: "17*11.5*5", pret: 1.5 }, { dim: "17*14*6", pret: 1.7 },
+                { dim: "26*18*8", pret: 2.5 }, { dim: "30*21*8", pret: 3.3 }
+            ]
+        },
+        {
+            id: "amore", nume: "CUTII PATRATE CU FEREASTRA AMORE",
+            variante: [{ dim: "20*20*8", pret: 2.3 }]
+        },
+        {
+            id: "haute_vision", nume: "CUTII HAUTE VISION",
+            variante: [
+                { dim: "25*25*5", pret: 2.6 }, { dim: "28*28*5", pret: 2.9 }, { dim: "20*10.5*5", pret: 1.5 }
+            ]
+        },
+        {
+            id: "prestige", nume: "CUTII DREPTUNGHIULARE PRESTIGE",
+            variante: [
+                { dim: "32*32*13", pret: 5.8 }, { dim: "40*40*13", pret: 7.8 },
+                { dim: "42.5*28.5*6", pret: 4.9 }, { dim: "44*30*12", pret: 6.4 }, { dim: "62*42*13", pret: 13.6 }
+            ]
+        }
+    ];
 
-    value += amount;
+    let listaClientiObj = JSON.parse(localStorage.getItem('b2b_clienti_v11')) || [];
+    let istoricPreturiClienti = JSON.parse(localStorage.getItem('b2b_istoric_v11')) || {};
+    let jurnalComenziTrimise = JSON.parse(localStorage.getItem('b2b_jurnal_v11')) || [];
 
-    if (value < 0) value = 0;
+    let clientCurent = ""; let comandaCurenta = {}; let textGlobalRezumat = "";
 
-    el.innerText = value;
-  }
+    // Curățare automată la 365 de zile
+    const UN_AN_IN_MS = 365 * 24 * 60 * 60 * 1000;
+    jurnalComenziTrimise = jurnalComenziTrimise.filter(c => (Date.now() - c.timestamp) < UN_AN_IN_MS);
+    localStorage.setItem('b2b_jurnal_v11', JSON.stringify(jurnalComenziTrimise));
 
-  function saveOrder() {
-    alert('Comanda a fost salvată!');
-  }
+    actualizeazaDropdownClienti();
+    randareJurnalComenzi();
+
+    function salveazaClientNou() {
+        let nume = document.getElementById("numeClientNou").value.trim();
+        let tel = document.getElementById("telefonClientNou").value.trim();
+        let adr = document.getElementById("adresaClientNou").value.trim();
+        if (!nume) { alert("Numele este obligatoriu!"); return; }
+        if (listaClientiObj.some(c => c.nume.toLowerCase() === nume.toLowerCase())) { alert("Clientul există deja!"); return; }
+
+        listaClientiObj.push({ nume: nume, telefon: tel, adresa: adr });
+        istoricPreturiClienti[nume] = {};
+        salveazaInMemorie(); actualizeazaDropdownClienti();
+        document.getElementById("numeClientNou").value = "";
+        document.getElementById("telefonClientNou").value = "";
+        document.getElementById("adresaClientNou").value = "";
+        alert(`Clientul "${nume}" a fost adăugat.`);
+    }
+
+    function stergeClientulSelectat() {
+        let deSters = document.getElementById("selectClient").value;
+        if (!deSters) { alert("Selectează un client!"); return; }
+        if (confirm(`Ștergi definitiv clientul "${deSters}"?`)) {
+            listaClientiObj = listaClientiObj.filter(c => c.nume !== deSters);
+            delete istoricPreturiClienti[deSters];
+            salveazaInMemorie(); actualizeazaDropdownClienti();
+            document.getElementById("zonaProduse").style.display = "none";
+            document.getElementById("zonaRezumat").style.display = "none";
+        }
+    }
+
+    function actualizeazaDropdownClienti() {
+        let select = document.getElementById("selectClient");
+        select.innerHTML = '<option value="">-- Deschide lista de clienți --</option>';
+        listaClientiObj.sort((a,b) => a.nume.localeCompare(b.nume)).forEach(c => {
+            select.innerHTML += `<option value="${c.nume}">${c.nume}</option>`;
+        });
+    }
+
+    function salveazaInMemorie() {
+        localStorage.setItem('b2b_clienti_v11', JSON.stringify(listaClientiObj));
+        localStorage.setItem('b2b_istoric_v11', JSON.stringify(istoricPreturiClienti));
+        localStorage.setItem('b2b_jurnal_v11', JSON.stringify(jurnalComenziTrimise));
+    }
+
+    function incarcaClient() {
+        clientCurent = document.getElementById("selectClient").value;
+        if (!clientCurent) { document.getElementById("zonaProduse").style.display = "none"; document.getElementById("zonaRezumat").style.display = "none"; return; }
+        let dateClient = listaClientiObj.find(c => c.nume === clientCurent);
+        document.getElementById("zonaProduse").style.display = "block";
+        document.getElementById("zonaRezumat").style.display = "none";
+        document.getElementById("titluComanda").innerText = `Comandă curentă: ${dateClient.nume}`;
+        document.getElementById("detaliiClientBula").innerHTML = `📍 <b>Livrare:</b> ${dateClient.adresa || "Nespecificată"} | 📞 <b>Tel:</b> ${dateClient.telefon || "Nespecificat"}`;
+        comandaCurenta = {}; document.getElementById("cautaProdus").value = "";
+        construiesteInterfataProduse();
+    }
+
+    function construiesteInterfataProduse() {
+        let istoricClient = istoricPreturiClienti[clientCurent] || {};
+        let cheiInIstoric = Object.keys(istoricClient);
+        let divIstoric = document.getElementById("sectiuneIstoric");
+        let listaIstoric = document.getElementById("listaIstoric");
+        let listaCatalog = document.getElementById("listaCatalog");
+        listaIstoric.innerHTML = ""; listaCatalog.innerHTML = "";
+        let areIstoric = false;
+
+        catalogMarfa.forEach(prod => {
+            let varianteCumparate = prod.variante.filter(v => cheiInIstoric.includes(`${prod.id}||${v.dim}`));
+            if (varianteCumparate.length > 0) { areIstoric = true; listaIstoric.innerHTML += genereazaCardProdus(prod, varianteCumparate, "istoric"); }
+        });
+        divIstoric.style.display = areIstoric ? "block" : "none";
+
+        catalogMarfa.forEach(prod => {
+            let varianteNoi = prod.variante.filter(v => !cheiInIstoric.includes(`${prod.id}||${v.dim}`));
+            if (varianteNoi.length > 0) { listaCatalog.innerHTML += genereazaCardProdus(prod, varianteNoi, "catalog"); }
+        });
+    }
+
+    function genereazaCardProdus(prod, variante, tip) {
+        let randuriVariante = "";
+        let istoricClient = istoricPreturiClienti[clientCurent] || {};
+        variante.forEach(v => {
+            let cheieUnica = `${prod.id}||${v.dim}`;
+            let pretDeAfisat = (tip === "istoric") ? (istoricClient[cheieUnica] || v.pret) : v.pret;
+            randuriVariante += `
+                <tr>
+                    <td><b>${v.dim} cm</b></td>
+                    <td><input type="number" step="0.01" class="input-pret-modificabil" id="pret_${tip}_${cheieUnica}" value="${pretDeAfisat}" onchange="salveazaModificareLive('${cheieUnica}', '${tip}')"> lei</td>
+                    <td><input type="number" min="0" class="input-cantitate" id="cant_${tip}_${cheieUnica}" placeholder="0" onchange="salveazaModificareLive('${cheieUnica}', '${tip}')"> buc</td>
+                </tr>
+            `;
+        });
+        return `<div class="card-produs"><div><div class="produs-antet">${prod.nume}</div><table class="tabel-variante"><thead><tr><th>Dimensiune</th><th>Preț Unitar</th><th>Cantitate</th></tr></thead><tbody>${randuriVariante}</tbody></table></div></div>`;
+    }
+
+    function salveazaModificareLive(cheieUnica, tip) {
+        let pretInput = document.getElementById(`pret_${tip}_${cheieUnica}`).value;
+        let cantInput = document.getElementById(`cant_${tip}_${cheieUnica}`).value;
+        let cantitate = parseInt(cantInput) || 0; let pret = parseFloat(pretInput) || 0;
+        if (cantitate > 0) { comandaCurenta[cheieUnica] = { cantitate: cantitate, pret: pret }; } else { delete comandaCurenta[cheieUnica]; }
+    }
+
+    function filtreazaProduse() {
+        let text = document.getElementById("cautaProdus").value.toLowerCase();
+        let carduri = document.querySelectorAll("#listaCatalog .card-produs");
+        carduri.forEach(card => {
+            let nume = card.querySelector(".produs-antet").innerText.toLowerCase();
+            card.style.display = nume.includes(text) ? "" : "none";
+        });
+    }
+
+    function finalizareComandaCompleta() {
+        let cheiComandate = Object.keys(comandaCurenta);
+        if (cheiComandate.length === 0) { alert("Introdu cantitatea!"); return; }
+        let dateClient = listaClientiObj.find(c => c.nume === clientCurent);
+        let istoricClientCurent = istoricPreturiClienti[clientCurent] || {};
+
+        let acum = new Date();
+        let dataAfisabila = acum.toLocaleDateString('ro-RO', { day: '2-digit', month: '2-digit', year: 'numeric' }) + " " + acum.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+
+        let textRezumat = `📋 *COMANDĂ NOUĂ CUTII*\n📅 *Data:* ${dataAfisabila}\n👤 *Client:* ${clientCurent}\n📍 *Livrare:* ${dateClient.adresa || 'Fără'}\n📞 *Tel:* ${dateClient.telefon || 'Fără'}\n-------------------------\n`;
+        
+        cheiComandate.forEach(cheie => {
+            let [prodId, dim] = cheie.split("||");
+            let pOriginal = catalogMarfa.find(p => p.id === prodId);
+            let detalii = comandaCurenta[cheie];
+            textRezumat += `- ${pOriginal.nume} [${dim} cm] -> *${detalii.cantitate} buc* (Preț: ${detalii.pret.toFixed(2)} lei/buc)\n`;
+            istoricClientCurent[cheie] = detalii.pret;
+        });
+        textRezumat += `-------------------------`;
+
+        let comandaIstoric = {
+            timestamp: Date.now(),
+            dataText: dataAfisabila,
+            clientNume: clientCurent,
+            textComplet: textRezumat
+        };
+        jurnalComenziTrimise.unshift(comandaIstoric);
+
+        istoricPreturiClienti[clientCurent] = istoricClientCurent;
+        salveazaInMemorie();
+        randareJurnalComenzi();
+
+        textGlobalRezumat = textRezumat;
+        document.getElementById("textRezumatFinal").value = textRezumat;
+        document.getElementById("zonaRezumat").style.display = "block";
+        document.getElementById("zonaRezumat").scrollIntoView({ behavior: 'smooth' });
+        
+        alert("Comanda a fost salvată în Jurnal!");
+    }
+
+    function randareJurnalComenzi() {
+        let divJurnal = document.getElementById("listaJurnalComenzi");
+        if (jurnalComenziTrimise.length === 0) { divJurnal.innerHTML = "<p style='color: #718096; font-style: italic;'>Jurnal gol.</p>"; return; }
+
+        let html = "";
+        jurnalComenziTrimise.forEach((com, index) => {
+            html += `
+                <div class="card-comanda-veche" data-client="${com.clientNume.toLowerCase()}" data-data="${com.dataText}">
+                    <div class="antet-comanda-veche">
+                        <span>👤 ${com.clientNume} | 📅 ${com.dataText}</span>
+                        <button class="btn-trimite-jurnal" onclick="trimiteDinJurnal(${index})">Trimite la Facturare 💬</button>
+                    </div>
+                    <div class="text-comanda-veche">${com.textComplet}</div>
+                </div>
+            `;
+        });
+        divJurnal.innerHTML = html;
+    }
+
+    function trimiteDinJurnal(index) {
+        let com = jurnalComenziTrimise[index];
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(com.textComplet)}`, '_blank');
+    }
+
+    function filtreazaJurnal() {
+        let textCautat = document.getElementById("cautaInJurnal").value.toLowerCase();
+        let carduriComenzi = document.querySelectorAll("#listaJurnalComenzi .card-comanda-veche");
+        carduriComenzi.forEach(card => {
+            let client = card.getAttribute("data-client");
+            let data = card.getAttribute("data-data");
+            card.style.display = (client.includes(textCautat) || data.includes(textCautat)) ? "" : "none";
+        });
+    }
+
+    function copiazaTextul() {
+        let textarea = document.getElementById("textRezumatFinal"); textarea.select();
+        navigator.clipboard.writeText(textarea.value); alert("Copiat!");
+    }
+
+    function trimitePeWhatsApp() {
+        if (!textGlobalRezumat) return;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textGlobalRezumat)}`, '_blank');
+    }
 </script>
-
 </body>
 </html>
