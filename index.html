@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Gestiune Pro v7.0</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 15px; background-color: #f0f4f8; color: #333; font-size: 16px; }
+        h1 { color: #1a365d; margin-top: 0; margin-bottom: 10px; font-size: 24px; }
+        h2 { color: #1a365d; font-size: 20px; margin-top: 5px; margin-bottom: 15px; }
+        h3 { color: #2c5282; font-size: 16px; margin-top: 0; }
+        
+        .container { max-width: 1350px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media(max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        .section { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        
+        .bara-pliabila { background-color: #1e293b; color: white; padding: 14px 18px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 15px; user-select: none; font-size: 16px; }
+        .bara-pliabila:hover { background-color: #334155; }
+        .continut-pliabil { display: none; background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 0 0 8px 8px; margin-top: -15px; margin-bottom: 20px; }
+
+        input, select, button { padding: 14px 16px; margin: 6px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; width: 100%; box-sizing: border-box; }
+        input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+        
+        button { background-color: #2563eb; color: white; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; width: auto; }
+        button:hover { background-color: #1d4ed8; }
+        .btn-success { background-color: #10b981; }
+        .btn-success:hover { background-color: #059669; }
+        .btn-secondary { background-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-danger { background-color: #ef4444; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-orange { background-color: #f97316; color: white; }
+        .btn-orange:hover { background-color: #ea580c; }
+        .btn-wa { background-color: #25D366; color: white; }
+        .btn-wa:hover { background-color: #128C7E; }
+        .btn-wa-mic { background-color: #25D366; color: white; padding: 8px 14px; font-size: 14px; font-weight: bold; border-radius: 6px; width: auto; }
+        .btn-wa-mic:hover { background-color: #128C7E; }
+        
+        label { font-size: 16px; color: #334155; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; table-layout: auto; }
+        th, td { border: 1px solid #e2e8f0; padding: 12px 10px; text-align: left; font-size: 15px; vertical-align: middle; }
+        th { background-color: #1e293b; color: white; font-size: 15px; }
+        tr:nth-child(even) { background-color: #f1f5f9; }
+        
+        .lista-sugestii { border: 1px solid #cbd5e1; border-top: none; max-height: 360px; overflow-y: auto; background: white; position: absolute; z-index: 999; width: calc(100% - 2px); display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-radius: 0 0 8px 8px; }
+        .sugestie-item { padding: 14px 16px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 16px; line-height: 1.4; color: #1e293b; }
+        .sugestie-item:hover { background-color: #eff6ff; color: #2563eb; }
+        
+        .relativ { position: relative; width: 100%; }
+        .badge { background: #e2e8f0; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #475569; }
+        .badge-cod { background: #e2e8f0; color: #1e293b; padding: 3px 8px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-right: 8px; display: inline-block; border: 1px solid #cbd5e1; }
+        .status-trimis { background-color: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; margin-bottom: 5px; border: 1px solid #a7f3d0; }
+        .status-netrimis { background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; margin-bottom: 5px; border: 1px solid #fecaca; }
+        textarea { width: 100%; height: 70px; font-family: monospace; font-size: 12px; margin-top: 5px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .date-contact { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-top: 8px; font-size: 15px; color: #166534; display: none; line-height: 1.4; }
+        .notificare-istoric { background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px; border-radius: 8px; margin-top: 8px; font-size: 14px; color: #1e40af; display: none; }
+        .produs-linie-istoric { padding: 6px 0; border-bottom: 1px dashed #cbd5e1; color: #334155; font-size: 14.5px; }
+        .produs-linie-istoric:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px;">
+        <h1>📊 Gestiune Muncă <span style="font-size: 15px; color:#64748b; font-weight: normal;">v7.0 (Sistem Bifare Comenzi)</span></h1>
+        <div>
+            <span class="badge">Clienți: <span id="contorClienți">0</span></span>
+            <span class="badge">Produse: <span id="contorProduse">0</span></span>
+        </div>
+    </div>
+
+    <div class="section" style="background: #fffbeb; border-color: #fef3c7;">
+        <h3 style="color:#b45309;">🛡️ Caseta de Salvare / Import Export Bază de Date</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button class="btn-secondary" onclick="genereazaCodBackup()">1. Generează Cod Salvare</button>
+            <button class="btn-success" onclick="incarcaCodBackup()">2. Încarcă Datele din Casetă</button>
+        </div>
+        <textarea id="zonaCodBackup" placeholder="Lipește codul de import aici..."></textarea>
+    </div>
+
+    <div class="grid-2">
+        <div>
+            <div class="bara-pliabila" onclick="comutaSectiune('pliabilClienti', 'sageataC')">
+                <span>👤 Deschide Administrare Clienți</span>
+                <span id="sageataC">▼</span>
+            </div>
+            <div id="pliabilClienti" class="continut-pliabil">
+                <h2>👤 Administrare Clienți</h2>
+                <h3>Adaugă Client Nou</h3>
+                <input type="text" id="numeClient" placeholder="Nume client nou / Firmă...">
+                <input type="text" id="persContact" placeholder="Persoană de contact...">
+                <input type="text" id="telClient" placeholder="Telefon...">
+                <input type="text" id="adrClient" placeholder="Adresă...">
+                <button onclick="adaugaClientManual()">Adaugă Client</button>
+                
+                <hr style="border:0; border-top:1px solid #cbd5e1; margin:15px 0;">
+                <h3>Șterge un Client din Sistem</h3>
+                <div class="relativ">
+                    <input type="text" id="cautaStergeClient" placeholder="Caută client de șters..." oninput="filtreazaStergeClient(this.value)">
+                    <div id="sugestiiStergeClient" class="lista-sugestii"></div>
+                </div>
+                <button class="btn-danger" id="btnStergeClient" style="display:none; margin-top:10px;" onclick="stergeClientDefinitiv()">Șterge Client Selectat</button>
+            </div>
+        </div>
+
+        <div>
+            <div class="bara-pliabila" onclick="comutaSectiune('pliabilProduse', 'sageataP')">
+                <span>📦 Deschide Administrare Produse</span>
+                <span id="sageataP">▼</span>
+            </div>
+            <div id="pliabilProduse" class="continut-pliabil">
+                <h2>📦 Administrare Produse</h2>
+                <h3>Adaugă / Modifică Produs</h3>
+                <input type="text" id="codProdusInput" placeholder="Cod Produs (Ex: COD123)...">
+                <input type="text" id="numeProdus" placeholder="Denumire Produs...">
+                <input type="text" id="umProdus" placeholder="Unitate de Măsură UM (buc, set, bax)...">
+                <input type="number" id="pretProdus" placeholder="Preț Unitar (RON)..." step="0.01">
+                <button onclick="actualizeazaProdusManual()">Salvează Produs</button>
+
+                <hr style="border:0; border-top:1px solid #cbd5e1; margin:15px 0;">
+                <h3>Șterge un Produs din Sistem</h3>
+                <div class="relativ">
+                    <input type="text" id="cautaStergeProdus" placeholder="Caută produs de șters..." oninput="filtreazaStergeProdus(this.value)">
+                    <div id="sugestiiStergeProdus" class="lista-sugestii"></div>
+                </div>
+                <button class="btn-danger" id="btnStergeProdus" style="display:none; margin-top:10px;" onclick="stergeProdusDefinitiv()">Șterge Produs Selectat</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🛒 Înregistrează Comandă</h2>
+        <div class="grid-2" style="margin-bottom: 10px;">
+            <div>
+                <label><b>Caută și Selectează Client:</b></label>
+                <div class="relativ">
+                    <input type="text" id="cautaClientInput" placeholder="Scrie numele clientului..." oninput="filtreazaClienti(this.value)">
+                    <div id="sugestiiClienți" class="lista-sugestii"></div>
+                </div>
+                <div id="dateContactComanda" class="date-contact"></div>
+                <div id="notificareIstoricComanda" class="notificare-istoric"></div>
+            </div>
+            <div>
+                <label><b>Adaugă Produse Noi în Coș (Căutare):</b></label>
+                <div class="relativ">
+                    <input type="text" id="cautaProdusInput" placeholder="Ex: caserola 500 neagra..." oninput="filtreazaProduse(this.value)">
+                    <div id="sugestiiProduse" class="lista-sugestii"></div>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 55%;">Cod și Denumire Produs</th>
+                    <th style="width: 10%;">UM</th>
+                    <th style="width: 13%;">Preț Unit.</th>
+                    <th style="width: 12%;">Cantitate</th>
+                    <th style="width: 10%;">Subtotal</th>
+                    <th style="width: 5%;">Șterge</th>
+                </tr>
+            </thead>
+            <tbody id="cosComanda"></tbody>
+        </table>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="margin:0; font-size: 24px;">Total Coș: <span id="totalCos" style="color:#10b981">0.00</span> RON</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-danger" style="font-size:16px; padding: 14px 22px;" onclick="reseteazaCosComplet()">🗑️ Coș Nou</button>
+                <button class="btn-wa" style="font-size:16px; padding: 14px 22px;" onclick="trimitePeWhatsApp()">💬 WhatsApp Direct</button>
+                <button class="btn-orange" style="font-size:16px; padding: 14px 22px;" onclick="exportaCosFacturare()">📥 Excel</button>
+                <button class="btn-success" style="font-size:16px; padding: 14px 26px;" onclick="salveazaComandaInIstoric()">💾 Salvează în Istoric</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Istoric și Căutare Fișă Client</h2>
+        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 15px;">
+            <div class="relativ" style="width: 350px;">
+                <label><b>Filtrează după Client:</b></label>
+                <input type="text" id="cautaFiltruClient" placeholder="Scrie nume client..." oninput="filtreazaClientiIstoric(this.value)">
+                <div id="sugestiiFiltru" class="lista-sugestii"></div>
+            </div>
+            <button class="btn-secondary" onclick="reseteazaFiltru()">Vezi Toate</button>
+            <button class="btn-orange" id="btnExportFisa" style="display:none;" onclick="exportaFisaClientCurent()">📥 Exportă Fișa Excel</button>
+        </div>
+        
+        <div id="dateContactFisa" class="date-contact" style="margin-bottom:15px; background:#eff6ff; border-color:#bfdbfe; color:#1e40af;"></div>
+
+        <h3 id="titluTabelIstoric" style="margin-top:20px; font-size: 18px;">Toate comenzile din sistem:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 13%;">Dată / Oră</th>
+                    <th style="width: 15%;">Client</th>
+                    <th style="width: 40%;">Produse cumpărate</th>
+                    <th style="width: 12%;">Total</th>
+                    <th style="width: 10%;">Stare</th>
+                    <th style="width: 10%;">Acțiuni</th>
+                </tr>
+            </thead>
+            <tbody id="corpIstoric"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let db;
+    let clienti = {}, produse = {}, comenzi = [];
+    let clientSelectatCurent = "", clientDeSters = "", produsDeSters = "", cosCurent = [], filtruClientActiv = "";
+
+    const request = indexedDB.open("GearsMuncaDB", 1);
+    request.onupgradeneeded = function(e) {
+        let dbInst = e.target.result;
+        if (!dbInst.objectStoreNames.contains("setari")) { dbInst.createObjectStore("setari"); }
+    };
+    request.onsuccess = function(e) {
+        db = e.target.result;
+        incarcaToateDateleDinDB();
+    };
+
+    function comutaSectiune(idElement, idSageata) {
+        let el = document.getElementById(idElement);
+        let sageata = document.getElementById(idSageata);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+            sageata.innerText = "▼";
+        } else {
+            el.style.display = "block";
+            sageata.innerText = "▲";
+        }
+    }
+
+    function incarcaToateDateleDinDB() {
+        let transaction = db.transaction(["setari"], "readonly");
+        let store = transaction.objectStore("setari");
+        
+        let reqC = store.get("clienti");
+        reqC.onsuccess = function() { clienti = reqC.result || {}; randareTot(); };
+        
+        let reqP = store.get("produse");
+        reqP.onsuccess = function() { produse = reqP.result || {}; randareTot(); };
+        
+        let reqK = store.get("comenzi");
+        reqK.onsuccess = function() { comenzi = reqK.result || []; randareTot(); };
+    }
+
+    function salveazaDatele() {
+        let transaction = db.transaction(["setari"], "readwrite");
+        let store = transaction.objectStore("setari");
+        store.put(clienti, "clienti");
+        store.put(produse, "produse");
+        store.put(comenzi, "comenzi");
+        randareTot();
+    }
+
+    function adaugaClientManual() {
+        let nume = document.getElementById('numeClient').value.trim();
+        let pers = document.getElementById('persContact').value.trim();
+        let tel = document.getElementById('telClient').value.trim();
+        let adr = document.getElementById('adrClient').value.trim();
+        if(nume) {
+            clienti[nume] = { contact: pers, telefon: tel, adresa: adr };
+            document.getElementById('numeClient').value = '';
+            document.getElementById('persContact').value = '';
+            document.getElementById('telClient').value = '';
+            document.getElementById('adrClient').value = '';
+            salveazaDatele();
+            alert("Client adăugat!");
+        }
+    }
+
+    function actualizeazaProdusManual() {
+        let cod = document.getElementById('codProdusInput').value.trim() || "-";
+        let nume = document.getElementById('numeProdus').value.trim();
+        let um = document.getElementById('umProdus').value.trim() || "buc";
+        let pret = parseFloat(document.getElementById('pretProdus').value);
+        if(nume && !isNaN(pret)) {
+            produse[nume] = { pret: pret, cod: cod, um: um };
+            document.getElementById('codProdusInput').value = '';
+            document.getElementById('numeProdus').value = '';
+            document.getElementById('umProdus').value = '';
+            document.getElementById('pretProdus').value = '';
+            salveazaDatele();
+            alert("Produs salvat!");
+        }
+    }
+
+    function filtreazaStergeClient(val) {
+        let div = document.getElementById('sugestiiStergeClient');
+        if(!val) { div.style.display = 'none'; return; }
+        let filtrate = Object.keys(clienti).filter(c => c.toLowerCase().includes(val.toLowerCase())).slice(0,10);
+        if(filtrate.length === 0) { div.style.display = 'none'; return; }
+        div.innerHTML = filtrate.map(c => `<div class="sugestie-item" onclick="selecteazaClientStergere('${c}')">${c}</div>`).join('');
+        div.style.display = 'block';
+    }
+    function selecteazaClientStergere(nume) {
+        clientDeSters = nume;
+        document.getElementById('cautaStergeClient').value = nume;
+        document.getElementById('sugestiiStergeClient').style.display = 'none';
+        document.getElementById('btnStergeClient').style.display = 'block';
+    }
+    function stergeClientDefinitiv() {
+        if(clientDeSters && confirm(`Ștergi definitiv clientul "${clientDeSters}"?`)) {
+            delete clienti[clientDeSters]; clientDeSters = "";
+            document.getElementById('cautaStergeClient').value = "";
+            document.getElementById('btnStergeClient').style.display = 'none';
+            salveazaDatele();
+        }
+    }
+
+    function filtreazaStergeProdus(val) {
+        let div = document.getElementById('sugestiiStergeProdus');
+        if(!val) { div.style.display = 'none'; return; }
+        let cuvinte = val.toLowerCase().split(" ").filter(w => w.length > 0);
+        let filtrate = Object.keys(produse).filter(p => {
+            let tinta = (p + " " + (produse[p].cod || '')).toLowerCase();
+            return cuvinte.every(c => tinta.includes(c));
+        }).slice(0, 12);
+        
+        if(filtrate.length === 0) { div.style.display = 'none'; return; }
+        div.innerHTML = filtrate.map(p => `<div class="sugestie-item" onclick="selecteazaProdusStergere('${p}')">[${produse[p].cod || '-'}] ${p}</div>`).join('');
+        div.style.display = 'block';
+    }
+    function selecteazaProdusStergere(nume) {
+        produsDeSters = nume;
+        document.getElementById('cautaStergeProdus').value = nume;
+        document.getElementById('sugestiiStergeProdus').style.display = 'none';
+        document.getElementById('btnStergeProdus').style.display = 'block';
+    }
+    function stergeProdusDefinitiv() {
+        if(produsDeSters && confirm(`Ștergi definitiv produsul "${produsDeSters}"?`)) {
+            delete produse[produsDeSters]; produsDeSters = "";
+            document.getElementById('cautaStergeProdus').value = "";
+            document.getElementById('btnStergeProdus').style.display = 'none';
+            salveazaDatele();
+        }
+    }
+
+    function filtreazaClienti(valoare) {
+        let div = document.getElementById('sugestiiClienți');
+        if(!valoare) { div.style.display = 'none'; return; }
+        let filtrate = Object.keys(clienti).filter(c => c.toLowerCase().includes(valoare.toLowerCase())).slice(0, 10);
+        if(filtrate.length === 0) { div.style.display = 'none'; return; }
+        div.innerHTML = filtrate.map(c => `<div class="sugestie-item" onclick="selecteazaClient('${c}')"><b>${c}</b></div>`).join('');
+        div.style.display = 'block';
+    }
+
+    function selecteazaClient(nume) {
+        clientSelectatCurent = nume;
+        document.getElementById('cautaClientInput').value = nume;
+        document.getElementById('sugestiiClienți').style.display = 'none';
+        
+        let info = clienti[nume] || {};
+        let divBox = document.getElementById('dateContactComanda');
+        divBox.innerHTML = `<b>👤 Client:</b> ${nume} | <b>🙋‍♂️ Contact:</b> ${info.contact || '-'} | <b>📞 Tel:</b> ${info.telefon || '-'} | <b>📍 Adr:</b> ${info.adresa || '-'}`;
+        divBox.style.display = 'block';
+
+        cosCurent = []; 
+        let notificariDiv = document.getElementById('notificareIstoricComanda');
+        notificariDiv.style.display = 'none';
+
+        let comenziClient = comenzi.filter(c => c.client === nume);
+        if (comenziClient.length > 0) {
+            let setProduseCumparate = new Set();
+            comenziClient.forEach(com => {
+                if(com.vectorProduse) {
+                    com.vectorProduse.forEach(p => setProduseCumparate.add(p.nume));
+                }
+            });
+
+            if (setProduseCumparate.size > 0) {
+                setProduseCumparate.forEach(numeProdus => {
+                    if (produse[numeProdus]) {
+                        cosCurent.push({
+                            nume: numeProdus,
+                            pret: produse[numeProdus].pret,
+                            cod: produse[numeProdus].cod || '-',
+                            um: produse[numeProdus].um || 'buc',
+                            cantitate: 0 
+                        });
+                    }
+                });
+                
+                notificariDiv.innerHTML = `📋 <b>Portofoliu client încărcat:</b> S-au adăugat automat toate cele <b>${setProduseCumparate.size} produse</b> cumpărate în trecut. Pune cantitate doar unde dorești azi!`;
+                notificariDiv.style.display = 'block';
+            }
+        }
+        randareCos();
+    }
+
+    function filtreazaProduse(valoare) {
+        let div = document.getElementById('sugestiiProduse');
+        if(!valoare) { div.style.display = 'none'; return; }
+        
+        let cuvinteCautate = valoare.toLowerCase().split(" ").filter(w => w.length > 0);
+        let filtrate = Object.keys(produse).filter(p => {
+            let textProdusComplet = (p + " " + (produse[p].cod || '')).toLowerCase();
+            return cuvinteCautate.every(cuvant => textProdusComplet.includes(cuvant));
+        }).slice(0, 12);
+        
+        if(filtrate.length === 0) { div.style.display = 'none'; return; }
+        
+        div.innerHTML = filtrate.map(p => {
+            let numeEscaped = p.replace(/'/g, "\\'");
+            return `
+                <div class="sugestie-item" onclick="adaugaInCos('${numeEscaped}')">
+                    <b>[${produse[p].cod || '-'}]</b> ${p} (<span style="color:#2563eb;font-weight:bold;">${produse[p].um || 'buc'}</span>) — <b style="color:#10b981;">${produse[p].pret.toFixed(2)} RON</b>
+                </div>
+            `;
+        }).join('');
+        div.style.display = 'block';
+    }
+
+    function adaugaInCos(numeProdus) {
+        let existent = cosCurent.find(item => item.nume === numeProdus);
+        if(existent) { 
+            if(existent.cantitate === 0) existent.cantitate = 1;
+            else existent.cantitate += 1; 
+        } else { 
+            cosCurent.push({ 
+                nume: numeProdus, 
+                pret: produse[numeProdus].pret, 
+                cod: produse[numeProdus].cod || '-', 
+                um: produse[numeProdus].um || 'buc',
+                cantitate: 1 
+            }); 
+        }
+        document.getElementById('cautaProdusInput').value = '';
+        document.getElementById('sugestiiProduse').style.display = 'none';
+        randareCos();
+    }
+
+    function schimbaCantitate(index, cantitate) {
+        let valIntreaga = parseInt(cantitate);
+        if(isNaN(valIntreaga) || valIntreaga < 0) valIntreaga = 0;
+        cosCurent[index].cantitate = valIntreaga;
+        randareCos();
+    }
+
+    function stergeDinCos(index) { cosCurent.splice(index, 1); randareCos(); }
+
+    function randareCos() {
+        let corp = document.getElementById('cosComanda'); corp.innerHTML = ''; let total = 0;
+        cosCurent.forEach((item, index) => {
+            let subtotal = item.pret * item.cantitate; total += subtotal;
+            let stilRand = item.cantitate > 0 ? "background-color: #f0fdf4; font-weight: bold;" : "";
+            
+            corp.innerHTML += `<tr style="${stilRand}">
+                <td><span class="badge-cod">${item.cod}</span> ${item.nume}</td>
+                <td><span style="color:#64748b; font-weight:bold;">${item.um}</span></td>
+                <td>${item.pret.toFixed(2)} RON</td>
+                <td><input type="number" step="1" min="0" value="${item.cantitate}" style="width:85px; margin:0; padding:10px; font-weight:bold; font-size:16px;" onchange="schimbaCantitate(${index}, this.value)"></td>
+                <td><b style="color:#1e3a8a;">${subtotal.toFixed(2)} RON</b></td>
+                <td><button class="btn-danger" style="padding:8px 14px; font-size:14px; font-weight:bold;" onclick="stergeDinCos(${index})">X</button></td>
+            </tr>`;
+        });
+        document.getElementById('totalCos').innerText = total.toFixed(2);
+    }
+
+    function reseteazaCosComplet() {
+        cosCurent = []; clientSelectatCurent = "";
+        document.getElementById('dateContactComanda').style.display = 'none';
+        document.getElementById('notificareIstoricComanda').style.display = 'none';
+        document.getElementById('cautaClientInput').value = "";
+        randareCos();
+    }
+
+    function salveazaComandaInIstoric() {
+        if(!clientSelectatCurent) { alert("Selectează un client!"); return; }
+        
+        let produseValide = cosCurent.filter(i => i.cantitate > 0);
+        if(produseValide.length === 0) { alert("Coșul nu conține produse cu cantitate mai mare de 0!"); return; }
+        
+        let totalGeneral = produseValide.reduce((sum, i) => sum + (i.pret * i.cantitate), 0);
+        let FlagExistent = comenzi.some(c => c.client === clientSelectatCurent && c.total === totalGeneral);
+        if (FlagExistent && !confirm("Mai există o comandă identică salvată recent. Salvezi din nou?")) return;
+
+        let produseSalvate = produseValide.map(i => { return { cod: i.cod, nume: i.nume, um: i.um, cantitate: i.cantitate, subtotal: i.pret * i.cantitate }; });
+        let dataCurenta = new Date().toLocaleString('ro-RO');
+        
+        // trimis: false înseamnă că abia am salvat-o în baza de date, nu e trimisă încă
+        comenzi.push({ id: Date.now(), data: dataCurenta, client: clientSelectatCurent, vectorProduse: produseSalvate, total: totalGeneral, trimis: false });
+        
+        salveazaDatele();
+        alert("Comandă înregistrată cu succes în istoric!");
+        reseteazaCosComplet();
+    }
+
+    function construiesteMesajText(numeClient, listaProduse, totalComanda, dataComanda) {
+        let clientInfo = clienti[numeClient] || {};
+        let textMesaj = `*COMANDA PENTRU FACTURARE*\n`;
+        textMesaj += `-----------------------------\n`;
+        textMesaj += `👤 *Client:* ${numeClient}\n`;
+        if(clientInfo.contact) textMesaj += `🙋‍♂️ *Contact:* ${clientInfo.contact}\n`;
+        if(clientInfo.telefon) textMesaj += `📞 *Tel:* ${clientInfo.telefon}\n`;
+        if(clientInfo.adresa) textMesaj += `📍 *Adresa:* ${clientInfo.adresa}\n`;
+        textMesaj += `📅 *Data:* ${dataComanda}\n`;
+        textMesaj += `-----------------------------\n`;
+        textMesaj += `📦 *PRODUSE COMANDATE:*\n\n`;
+        
+        listaProduse.filter(i => i.cantitate > 0).forEach(i => {
+            let pretUnit = i.pret || (i.cantitate > 0 ? (i.subtotal / i.cantitate) : 0);
+            let subT = i.subtotal ? i.subtotal : (i.pret * i.cantitate);
+            textMesaj += `🔹 [${i.cod}] *${i.nume}*\n`;
+            textMesaj += `    👉 ${i.cantitate} ${i.um || 'buc'} x ${pretUnit.toFixed(2)} RON = *${subT.toFixed(2)} RON*\n\n`;
+        });
+        
+        textMesaj += `-----------------------------\n`;
+        textMesaj += `💰 *TOTAL GENERAL:* ${totalComanda.toFixed(2)} RON`;
+        return textMesaj;
+    }
+
+    function trimitePeWhatsApp() {
+        if(!clientSelectatCurent) { alert("Selectează un client mai întâi!"); return; }
+        let dest = cosCurent.filter(i => i.cantitate > 0);
+        if(dest.length === 0) { alert("Coșul este gol!"); return; }
+        let dataAcum = new Date().toLocaleDateString('ro-RO');
+        let text = construiesteMesajText(clientSelectatCurent, dest, dest.reduce((sum, i) => sum + (i.pret * i.cantitate), 0), dataAcum);
+        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), '_blank');
+    }
+
+    // AICI S-A MODIFICAT: Când trimiți din istoric, starea devine automat „trimis: true”
+    function trimiteDinIstoricWhatsApp(idComanda) {
+        let indexCom = comenzi.findIndex(com => com.id === idComanda);
+        if(indexCom === -1) return;
+        
+        let c = comenzi[indexCom];
+        let text = construiesteMesajText(c.client, c.vectorProduse, c.total, c.data);
+        
+        // Schimbăm starea în „Trimis”
+        comenzi[indexCom].trimis = true;
+        salveazaDatele(); // Salvăm direct bifa în memoria tabletei
+        
+        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), '_blank');
+    }
+
+    function exportaCosFacturare() {
+        if(!clientSelectatCurent) { alert("Selectează clientul!"); return; }
+        let dest = cosCurent.filter(i => i.cantitate > 0);
+        if(dest.length === 0) { alert("Coșul este gol!"); return; }
+        let clientInfo = clienti[clientSelectatCurent] || {};
+        let dataAcum = new Date().toLocaleDateString('ro-RO');
+        let csv = "sep=,\nCLIENT,PERS_CONTACT,TELEFON,ADRESA,DATA FACTURARII\n";
+        csv += `"${clientSelectatCurent}","${clientInfo.contact || '-'}","${clientInfo.telefon || '-'}","${clientInfo.adresa || '-'}","${dataAcum}"\n\n`;
+        csv += "COD PRODUS,DENUMIRE PRODUS,UM,PRET UNITAR,CANTITATE,SUBTOTAL\n";
+        dest.forEach(i => { csv += `"${i.cod}","${i.nume}","${i.um}","${i.pret.toFixed(2)}","${i.cantitate}","${i.pret * i.cantitate}"\n`; });
+        let totalG = dest.reduce((sum, i) => sum + (i.pret * i.cantitate), 0);
+        csv += `,,,,,TOTAL COMANDA: ${totalG.toFixed(2)} RON\n`;
+        descarcaFisierExcel(csv, `Factura_${clientSelectatCurent.replace(/ /g, '_')}.csv`);
+    }
+
+    function exportaFisaClientCurent() {
+        if(!filtruClientActiv) return;
+        let filtrate = comenzi.filter(c => c.client === filtruClientActiv);
+        if(filtrate.length === 0) return;
+        let csv = "sep=,\nFISA LIVRARI SI FACTURARE PENTRU: " + filtruClientActiv + "\n\n";
+        csv += "DATA COMANDA,COD PRODUS,DENUMIRE PRODUS,UM,PRET UNITAR,CANTITATE,SUBTOTAL,STARE\n";
+        filtrate.forEach(c => {
+            if(c.vectorProduse) {
+                c.vectorProduse.forEach(p => {
+                    let prU = p.cantitate > 0 ? (p.subtotal / p.cantitate) : 0;
+                    let stText = c.trimis ? "TRIMIS" : "NESALVAT/NETRIMIS";
+                    csv += `"${c.data}","${p.cod}","${p.nume}","${p.um || 'buc'}","${prU.toFixed(2)}","${p.cantitate}","${p.subtotal.toFixed(2)}","${stText}"\n`;
+                });
+            }
+        });
+        descarcaFisierExcel(csv, `Fisa_Totala_${filtruClientActiv.replace(/ /g, '_')}.csv`);
+    }
+
+    function descarcaFisierExcel(continut, numeFisier) {
+        let blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), continut], { type: "text/csv;charset=utf-8;" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob); link.setAttribute("download", numeFisier);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    function randareTot() {
+        if(document.getElementById('contorClienți')) {
+            document.getElementById('contorClienți').innerText = Object.keys(clienti).length;
+        }
+        if(document.getElementById('contorProduse')) {
+            document.getElementById('contorProduse').innerText = Object.keys(produse).length;
+        }
+        afiseazaIstoricComplet(comenzi);
+    }
+
+    // AICI S-A MODIFICAT: Afișarea coloanei noi de Status (Bifă)
+    function afiseazaIstoricComplet(listaAfisare, titru = "Toate comenzile din sistem:") {
+        document.getElementById('titluTabelIstoric').innerText = titru;
+        let corp = document.getElementById('corpIstoric'); corp.innerHTML = '';
+        if(!listaAfisare || listaAfisare.length === 0) { corp.innerHTML = `<tr><td colspan="6" style="text-align:center; color:gray;">Nicio comandă găsită.</td></tr>`; return; }
+        
+        [...listaAfisare].reverse().forEach(c => {
+            let coloanaProduseHtml = "";
+            if(c.vectorProduse && Array.isArray(c.vectorProduse)) {
+                c.vectorProduse.forEach(p => {
+                    coloanaProduseHtml += `<div class="produs-linie-istoric">🔹 [${p.cod}] ${p.nume} <b>x ${p.cantitate} ${p.um || 'buc'}</b> (${p.subtotal.toFixed(2)} RON)</div>`;
+                });
+            }
+            let idUnde = c.id || Date.now();
+            
+            // Construim bifa vizuală
+            let statusHtml = c.trimis 
+                ? `<span class="status-trimis">✅ Trimis</span>` 
+                : `<span class="status-netrimis">⏳ În așteptare</span>`;
+
+            corp.innerHTML += `<tr>
+                <td>${c.data}</td>
+                <td><b>${c.client}</b></td>
+                <td>${coloanaProduseHtml}</td>
+                <td><b style="color:#10b981; font-size:16px;">${c.total.toFixed(2)} RON</b></td>
+                <td>${statusHtml}</td>
+                <td><button class="btn-wa-mic" onclick="trimiteDinIstoricWhatsApp(${idUnde})">💬 Trimite WA</button></td>
+            </tr>`;
+        });
+    }
+
+    function filtreazaClientiIstoric(valoare) {
+        let div = document.getElementById('sugestiiFiltru');
+        if(!valoare) { div.style.display = 'none'; return; }
+        let filtrate = Object.keys(clienti).filter(c => c.toLowerCase().includes(valoare.toLowerCase())).slice(0, 10);
+        if(filtrate.length === 0) { div.style.display = 'none'; return; }
+        div.innerHTML = filtrate.map(c => `<div class="sugestie-item" onclick="afiseazaIstoricPentruClient('${c}')">${c}</div>`).join('');
+        div.style.display = 'block';
+    }
+
+    function afiseazaIstoricPentruClient(numeClient) {
+        filtruClientActiv = numeClient;
+        document.getElementById('cautaFiltruClient').value = numeClient;
+        document.getElementById('sugestiiFiltru').style.display = 'none';
+        document.getElementById('btnExportFisa').style.display = 'inline-block';
+        let info = clienti[numeClient] || {};
+        let divFisa = document.getElementById('dateContactFisa');
+        divFisa.innerHTML = `<b>📋 Fișă Date Contact:</b> Contact: ${info.contact || '-'} | Tel: ${info.telefon || '-'} | Adr: ${info.adresa || '-'}`;
+        divFisa.style.display = 'block';
+        let filtrate = comenzi.filter(c => c.client === numeClient);
+        let totalIstoric = filtrate.reduce((sum, c) => sum + c.total, 0);
+        afiseazaIstoricComplet(filtrate, `Istoric pentru ${numeClient} (Total: ${totalIstoric.toFixed(2)} RON):`);
+    }
+
+    function reseteazaFiltru() {
+        filtruClientActiv = ""; document.getElementById('cautaFiltruClient').value = '';
+        document.getElementById('dateContactFisa').style.display = 'none'; document.getElementById('btnExportFisa').style.display = 'none';
+        afiseazaIstoricComplet(comenzi);
+    }
+
+    function genereazaCodBackup() {
+        let dateSistem = { clienti: clienti, produse: produse, comenzi: comenzi };
+        document.getElementById('zonaCodBackup').value = btoa(unescape(encodeURIComponent(JSON.stringify(dateSistem))));
+        alert("Cod de salvare generat! Copiază textul din casetă.");
+    }
+
+    function incarcaCodBackup() {
+        let cod = document.getElementById('zonaCodBackup').value.trim();
+        if(!cod) { alert("Introdu un cod valid în casetă!"); return; }
+        try {
+            let decodat = JSON.parse(decodeURIComponent(escape(atob(cod))));
+            if(decodat.clienti && decodat.produse && decodat.comenzi) {
+                clienti = decodat.clienti;
+                produse = decodat.produse;
+                comenzi = decodat.comenzi;
+                salveazaDatele();
+                document.getElementById('zonaCodBackup').value = '';
+                alert("Datele au fost importate cu succes!");
+            } else {
+                alert("Formatul codului este incorect!");
+            }
+        } catch(e) {
+            alert("Codul introdus este invalid sau corupt!");
+        }
+    }
+</script>
+</body>
+</html>
